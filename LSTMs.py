@@ -154,6 +154,7 @@ class LSTM:
         self.cs = np.zeros(ys)
         self.rl = rl
         self.lr = lr
+        ##forget,store, update, output
         self.f = np.random.random((ys, xs + ys))
         self.i = np.random.random((ys, xs + ys))
         self.c = np.random.random((ys, xs + ys))
@@ -253,18 +254,24 @@ iterations = 20
 learningRate = 0.001
 returnData, numCategories, expectedOutput, outputSize, data = LoadText()
 print("Done Reading")
-RNN = RecurrentNeuralNetwork(numCategories, numCategories, outputSize, expectedOutput, learningRate)
-
+# RNN = RecurrentNeuralNetwork(numCategories, numCategories, outputSize, expectedOutput, learningRate)
+LSTM = LSTM(numCategories,numCategories,outputSize,learningRate)
 for i in range(1, iterations):
-    RNN.forwardProp()
-    error = RNN.backProp()
+    # RNN.forwardProp()
+    LSTM.forwardProp()
+    # error = RNN.backProp()
+    error = LSTM.backProp()
     print("Error on iteration ", i, ": ", error)
     if error > -100 and error < 100 or i % 100 == 0:
-        seed = np.zeros_like(RNN.x)
-        maxI = np.argmax(np.random.random(RNN.x.shape))
+        # seed = np.zeros_like(RNN.x)
+        seed = np.zeros_like(LSTM.x)
+        # maxI = np.argmax(np.random.random(RNN.x.shape))
+        maxI = np.argmax(np.random.random(LSTM.x.shape))
         seed[maxI] = 1
-        RNN.x = seed
-        output = RNN.sample()
+        # RNN.x = seed
+        LSTM.x = seed
+        # output = RNN.sample()
+        output = LSTM.sample()
         print(output)
         ExportText(output, data)
         print("Done Writing")
