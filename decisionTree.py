@@ -27,7 +27,9 @@ def getPotentialSplits(data, randomAttributes):
     columnsIndices = list(range(columns - 1))
     if randomAttributes != None  and len(randomAttributes) <= len(columnsIndices):
         columnsIndices = randomAttributes
+    print(columnsIndices)
     for column in columnsIndices:
+        print(column, type(column).__name__)
         values = data[:, column]
         uniqueValues = numpy.unique(values)
         if len(uniqueValues) == 1:
@@ -38,6 +40,8 @@ def getPotentialSplits(data, randomAttributes):
                 if i != 0:
                     currentValue = uniqueValues[i]
                     previousValue = uniqueValues[i - 1]
+                    # print(type(currentValue).__name__, type(previousValue).__name__)
+                    # print((currentValue + previousValue) / 2)
                     potentialSplits[column].append((currentValue + previousValue) / 2)
     return potentialSplits
 
