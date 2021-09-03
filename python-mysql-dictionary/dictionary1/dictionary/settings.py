@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = '&e5z@dhmny9(zaf8us3%o(0vshnz@mdp)p6bqd*+cym^lkhqmo'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dictionary1safa.herokuapp.com', '127.0.0.1/']
 
 
 # Application definition
