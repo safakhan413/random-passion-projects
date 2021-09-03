@@ -1,8 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+import difflib
+from difflib import SequenceMatcher, get_close_matches
+
 # from rest_framework.parsers import JSONParser
 # from django.http.response import JsonResponse
+import sqlite3
+
 
 from thesaurus.models import Thesuarusitem
 from thesaurus.serializers import ThesaurusSerializer
@@ -17,11 +22,57 @@ def thesaurusView(request):
 
 def word(request):
     word = request.GET['word']
+    word = word.lower() ## to make sure that function is lower and upper case insensitive
+
     print('###############',word)
-    words = type(Thesuarusitem)
-    thesaurus_serializer = ThesaurusSerializer(words, many=True)
-    print('Im words###################', words)
-    return render(request, 'word.html')
+    words = Thesuarusitem.objects.all()
+    word_query = words.raw("SELECT id, word FROM thesaurus_thesuarusitem ")
+    worditems = list()
+    meaning = list()
+
+    for w in word_query:
+        worditems.append(w.word)
+    # if word in words.raw("SELECT id, word FROM thesaurus_thesuarusitem WHERE word = '%s'" %word).word:
+    raw_query_results = words.raw("SELECT id, meaning FROM thesaurus_thesuarusitem WHERE word = '%s'" %word)
+    if len(list(raw_query_results)) > 0:
+
+        for w in raw_query_results:
+            # if len(list())
+            # meaning = meaning + '\n' + w.meaning
+            meaning.append(w.meaning)
+            print('Im all words tables $*^*&^&*^',meaning)
+        results = {
+            'word': word,
+            'meaning': meaning,
+        }
+
+        return render(request, 'word.html', {'results': results})
+    else:
+
+        # print('!##$$$$$$$$$$$$$,', worditems)
+        close_match = get_close_matches(word, worditems, n = 1, cutoff=0.8)
+        print('!##$$$$$$$$$$$$$ im closematch,', close_match)
+        results = {
+            'word': word,
+            'meaning': ["We don't have this word in dictionary. Did you mean '%s'. If yes please input this word again to search." %close_match[0]],
+        }
+        return render(request, 'word.html', {'results': results})
+    # else:
+    # results = {
+    #     'word': word,
+    #     'meaning': meaning,
+    # }
+    #
+    # return render(request, 'word.html', {'results': results})
+
+    # query =
+    # thesaurus_serializer = ThesaurusSerializer(words, many=True)
+    # print('Im words###################', words[0].word)
+
+
+
+    # return render(request, 'word.html')
+
 
     # res = requests.get('https://www.dictionary.com/browse/' + word)
     # res2 = requests.get('https://www.thesaurus.com/browse/' + word)
